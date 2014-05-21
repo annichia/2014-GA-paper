@@ -1,0 +1,728 @@
+% Use only LaTeX2e, calling the article.cls class and 12-point type.
+
+\documentclass[12pt]{article}
+
+% Users of the {thebibliography} environment or BibTeX should use the
+% scicite.sty package, downloadable from *Science* at
+% www.sciencemag.org/about/authors/prep/TeX_help/ .
+% This package should properly format in-text
+% reference calls and reference-list numbers.
+
+\usepackage{scicite}
+
+% Use times if you have the font installed; otherwise, comment out the
+% following line.
+
+\usepackage{times}
+\usepackage[hyperindex, breaklinks]{hyperref} 
+
+% The preamble here sets up a lot of new/revised commands and
+% environments.  It's annoying, but please do *not* try to strip these
+% out into a separate .sty file (which could lead to the loss of some
+% information when we convert the file to other formats).  Instead, keep
+% them in the preamble of your main LaTeX source file.
+\usepackage{graphicx}
+
+% The following parameters seem to provide a reasonable page setup.
+
+\topmargin 0.0cm
+\oddsidemargin 0.2cm
+\textwidth 16cm 
+\textheight 21cm
+\footskip 1.0cm
+
+
+%The next command sets up an environment for the abstract to your paper.
+
+\newenvironment{sciabstract}{%
+\begin{quote} \bf}
+{\end{quote}}
+
+
+% If your reference list includes text notes as well as references,
+% include the following line; otherwise, comment it out.
+
+\renewcommand\refname{References and Notes}
+
+% The following lines set up an environment for the last note in the
+% reference list, which commonly includes acknowledgments of funding,
+% help, etc.  It's intended for users of BibTeX or the {thebibliography}
+% environment.  Users who are hand-coding their references at the end
+% using a list environment such as {enumerate} can simply add another
+% item at the end, and it will be numbered automatically.
+
+\newcounter{lastnote}
+\newenvironment{scilastnote}{%
+\setcounter{lastnote}{\value{enumiv}}%
+\addtocounter{lastnote}{+1}%
+\begin{list}%
+{\arabic{lastnote}.}
+{\setlength{\leftmargin}{.22in}}
+{\setlength{\labelsep}{.5em}}}
+{\end{list}}
+
+
+% Include your paper's title here
+
+\title{Troubleshooting Pertussis Vaccination: One Booster Schedule Doesn't Fit All} 
+
+
+% Place the author information here.  Please hand-code the contact
+% information and notecalls; do *not* use \footnote commands.  Let the
+% author contact information appear immediately below the author names
+% as shown.  We would also prefer that you don't change the type-size
+% settings shown here.
+
+\author
+{Maria A Riolo,$^{1,2\ast}$ Pejman Rohani$^{1,3,4}$\\
+\\
+\normalsize{$^{1}$Center for the Study of Complex Systems,}\\
+\normalsize{$^{2}$Department of Mathematics,}\\
+\normalsize{$^{3}$Department of Ecology \& Evolutionary Biology,}\\
+\normalsize{University of Michigan, Ann Arbor, MI 48109, USA}\\
+\normalsize{$^{4}$Fogarty International Center, National Institutes of Health,}\\
+\normalsize{Bethesda, MD 20892, USA}\\
+\\
+\normalsize{$^\ast$To whom correspondence should be addressed; E-mail:  mariolo@umich.edu.}
+}
+
+% Include the date command, but leave its argument blank.
+
+\date{}
+
+
+
+%%%%%%%%%%%%%%%%% END OF PREAMBLE %%%%%%%%%%%%%%%%
+
+
+
+\begin{document} 
+
+% Double-space the manuscript.
+
+\baselineskip24pt
+
+% Make the title.
+
+\maketitle 
+
+
+
+% Place your abstract within the special {sciabstract} environment.
+
+\begin{sciabstract}
+  
+
+
+Pertussis has become a major public health concern in many countries
+where it was once a plausible candidate for vaccine-based elimination.
+Although the mechanisms behind these resurgences remain elusive,
+many countries have nevertheless recommended additional
+booster vaccinations against pertussis, the timing and number of which vary widely.
+We searched for cost-effective booster vaccination strategies
+using a genetic algorithm
+and found that which booster schedules most successfully controlled pertussis transmission
+strongly depended on why pertussis transmission had persisted even with routine infant vaccination.
+Our results suggest that booster vaccination schedules are most effective when tailored to the problem at hand
+and that that misidentifying the causes of pertussis resurgences may be costly.
+\end{sciabstract}
+
+
+
+% In setting up this template for *Science* papers, we've used both
+% the \section* command and the \paragraph* command for topical
+% divisions.  Which you use will of course depend on the type of paper
+% you're writing.  Review Articles tend to have displayed headings, for
+% which \section* is more appropriate; Research Articles, when they have
+% formal topical divisions at all, tend to signal them with bold text
+% that runs into the paragraph, for which \paragraph* is the right
+% choice.  Either way, use the asterisk (*) modifier, as shown, to
+% suppress numbering.
+
+
+Reconciling the recent resurgences of pertussis in many highly-vaccinated countries
+with
+the initial successes of routine pertussis vaccination programs
+and the global heterogeneity in recent trends of pertussis incidence
+has proved difficult~\cite{Jackson&Rohani:2013}, 
+and a wide variety of competing explanations have been proposed.
+There are many mechanisms which could contribute to increases in pertussis incidence,
+including improvement in the surveillance and diagnosis of pertussis~\cite{Cherry:2003, Cherry:2012}
+or reduction of the protection afforded by vaccination, 
+whether due to the evolution of \textit{Bordetella pertussis}~\cite{Mooi_et:2001} or the
+the switch from whole cell to acellular vaccines~\cite{Shapiro:2012}.
+Even without any changes in the nature of pertussis transmission, control, or reporting,
+a resurgence of pertussis might be expected in some countries,
+as a simple mathematical consequence of a history of insufficient vaccination~\cite{Riolo_et:2013}.
+
+Disentangling the many pathways to pertussis resurgence is particularly difficult
+because pertussis immunity is not well-understood. 
+With no known, reliable markers of pertussis immunity~\cite{Farizo_et:2014}, 
+the properties of infection- and vaccine-derived protection against pertussis
+must be inferred indirectly.
+However, the models of pertussis immunity that best fit
+individual level clinical data and population level incidence data, respectively,
+are strikingly different.
+While 
+the data from reinfection studies~\cite{Jenkinson:1988} and animal models~\cite{Warfel_et:2014}
+can be explained by
+a vaccine that protects against disease for a limited duration
+and may not protect against transmission at all,
+large scale pertussis incidence data
+are more consistent with
+long-lasting vaccine-derived immunity and 
+sufficiently little transmission of pertussis among
+vaccinated and previously infected individuals
+as to confer some protection on unvaccinated individuals 
+via herd-immunity~\cite{Nielsen_et:1994,Wearing&Rohani:2009, Blackwood_et:2013}.
+
+Despite the uncertainty surrounding the properties of pertussis vaccines, 
+several countries experiencing increased pertussis incidence
+have supplemented existing infant vaccinations with additional
+booster vaccinations \cite{Zepp_et:2011}.
+We investigated which booster schedules afforded the greatest reduction in disease burden
+for the least logistical and monetary cost. 
+Because the causes of the pertussis resurgence remain unclear, 
+and need not be the same in every location, 
+we consider four scenarios 
+in which infant vaccination alone may fail to eliminate pertussis:
+
+
+\paragraph{Scenario I: Insufficient vaccine coverage.}
+Perhaps the simplest reason a disease may persist despite infant vaccination
+is if too few infants are vaccinated to curtail transmission.
+This scenario would describe, for example, 
+Thailand and Italy for several decades after the introduction of pertussis vaccines,
+where an increase in vaccine coverage, such as has occurred in the past three decades in both countries,
+has the potential to substantially reduced pertussis incidence.
+In many other regions, low vaccine coverage is likely to remain an important factor in 
+the persistence of pertussis transmission.
+As of October 2013, WHO estimates of vaccine coverage suggest that in \%10 of countries for which vaccination data is available
+at most \%80 of infants receive the recommended three doses of pertussis vaccine~\cite{WHO:2013}.
+Even in nations with high overall vaccination rates, 
+communities with high concentrations of unvaccinated or undervaccinated children
+may be at risk of outbreaks, as seems to be the case in some regions of the US~\cite{Omer:2009}.
+
+\paragraph{Scenario II: Low efficacy.}
+Primary vaccine failure, where a vaccine sometimes fails to provide protection when administered,
+is another mechanism by which a disease might persist despite infant vaccination efforts.
+For example, the outbreaks of pertussis in Canada beginning in the late 1980s
+have largely been attributed to the 
+poor efficacy of the Connought Laboratories adsorbed vaccine
+that was used between 1985 and 1998~\cite{Halperin_et:1989, Ntezayabo_et:2003}.
+More generally, the lack of serological measures of immunity to pertussis
+makes it very difficult to determine the rates of primary vaccine failure,
+much less distinguish such failures in ``take'' from other phenomena such as 
+waning immunity.
+
+\paragraph{Scenario III: Waning immunity.}
+Even if vaccination is widespread and initially efficacious, 
+infant vaccination alone may fail to achieve elimination if vaccine derived immunity is only temporary.
+Some waning of vaccine derived immunity to pertussis is supported by
+data at both the population and individual scales,
+but while population level patterns of incidence generally suggest long-lasting immunity~\cite{Wearing&Rohani:2009},
+individual level data on reinfections is better explained by a much shorter duration of protection~\cite{Jenkinson:1988}.
+
+\paragraph{Scenario IV: leaky immunity.}
+One potential mechanism for the changing epidemiology of pertussis
+is the evolution of \textit{B. pertussis}~\cite{Mooi_et:2001}.
+In the case of multiple  circulating strains of pertussis,
+for which vaccination induces at most limited cross-immunity,
+the probability of developing a transmissible, symptomatic infection
+after contact with an infectious individual may be reduced (but not eliminated) by vaccination.
+Such ``leakiness''~\cite{Halloran_et:1992} in vaccine derived immunity is another mechanism 
+with the potential to facilitate the persistence of pertussis
+despite infant vaccination.
+
+For simplicity, our current study considers only the extreme cases 
+where one of these problems alone is responsible for ongoing pertussis transmission.
+However, finding successful, cost-effective booster schedules remains a non-trivial task. 
+Because the space of possible schedules is 
+so high-dimensional and the dynamics of infectious diseases are so nonlinear,
+many traditional optimization tools are ill-suited for the problem.
+
+Here, we use a genetic algorithm (GA) to evolve cost-effective booster schedules
+by simulating the operation of natural selection on 
+a ``population'' of schedules for booster vaccination.
+Each strategy in the population has a genotype that encodes its
+prescribed schedule of booster vaccinations.
+The choice of how to encode strategies
+can have important effects on the performance of a genetic algorithm, 
+affecting both linkage and epistasis between genes
+as well as the topographical features of the fitness space.
+In the current study, we encode booster schedules on a
+single chromosome containing the
+probability of vaccination for each age cohort, to be
+carried out at the start of the each school term.
+
+\begin{figure}[h!]
+\caption{Our Super Cool GA Figure }
+\label{fig:GA}
+\end{figure}
+
+
+To evaluate the fitness of a strategy, we 
+simulate transmission dynamics following the introduction
+of the booster schedule using an age-structured SEIR model.
+Individuals are born susceptible, with routine infant vaccination
+occurring at five months of age.
+Susceptible individuals become exposed through contact with
+infectious individuals and, after a latent period, become infectious.
+After recovering, individuals are immune to further infection. In the current study,
+we consider infection derived immunity to be lifelong, based on
+previous studies of pertussis in Sweden and Thailand, which 
+found that previously infected individuals contributed very little to transmission
+~\cite{Rohani_et:2010, Blackwood_et:2013}.
+The number of individuals of each age in each state (susceptible, exposed, infectious,
+recovered, and vaccinated) is updated stochastically with a fixed time step of one week.
+
+Because the past history of pertussis incidence and infant vaccination are likely to have long-lasting effects on 
+ongoing transmission dynamics\cite{Riolo_et:2013}, we simulated pre-booster conditions with the same history of vaccination
+and chose parameters of coverage, efficacy, duration, and leakiness
+to give the same overall disease burden (measured in DALYs) 
+in the two decades preceding the booster campaign (Fig. \ref{fig:IC}A-D).
+
+\begin{figure}
+
+\begin{tabular}{ll}
+A&B\\
+\includegraphics[width=85mm]{"code/figs/1-ICs-coverage"}&
+\includegraphics[width=85mm]{"code/figs/1-ICs-efficacy"} \\
+C&D\\
+\includegraphics[width=85mm]{"code/figs/1-ICs-waning"}&
+\includegraphics[width=85mm]{"code/figs/1-ICs-leakiness"}\\
+\end{tabular}
+
+\caption{\footnotesize Pre-boosting incidence (solid red line) and infant vaccine uptake (dashed blue line)
+ with 70\% coverage (A), 70\% efficacy (B),
+a 45 year mean duration of immunity (C),  
+leaky immunity preventing 85.5\% of infections (D). In each case, 
+we simulated 100 years pre-vaccine (plotted starting at year 50).
+In year 100, vaccination began at 60\% of its eventual coverage level 
+and increased linearly over 20 years. 
+}
+
+\label{fig:IC}
+\end{figure}
+
+
+
+We can think of the simulated transmission dynamics 
+under a booster schedule as the
+phenotype of that strategy, with
+the combined cost of infections and vaccinations
+incurred during the simulation determining the strategy's fitness. 
+We assessed the cost of infections based on the expected
+disability-adjusted life-years (DALYs) lost, calculated as
+the expected duration of illness
+plus, in the case of a death,
+the expected years of life lost
+(average lifespan minus the age at death).
+For simplicity, we assume that the costs of vaccination scale
+linearly with the number of doses given, rather than
+considering aspects of vaccination efdisabifort which
+may be nonlinear.
+
+To generate a new population of booster schedules, 
+parent schedules are chosen using ``tournament selection''\cite{Goldberg&Kalyanmoy:1991},
+in which pairs of schedules are selected uniformly
+at random with replacement 
+to compete for the opportunity to reproduce.
+In each tournament, more fit schedule of the pair has a higher probability 
+(in the current study, 90\%) of winning.
+Carrying out $N$ such tournaments,
+where $N$ is the population size (in the current study, 2000 individuals), yields a pool of $N$ parents.
+Note that while more fit strategies are likely to appear more often
+as parents than less fit strategies, a strategy's reproductive opportunities
+are only determined by its rank.
+This has the benefit of being less sensitive to the particular fitness function
+used than a selection method relying on the actual fitness values of strategies
+would be.
+
+Once $N$ parents have been selected, these parents are divided into pairs and 
+each (not necessarily unique) pair of parents 
+produces a pair of offspring.
+The parent chromosomes undergo 
+crossover at a randomly chosen point
+along the chromosome.
+In each child chromosome,
+point mutations occur at a fixed rate $\mu$ 
+(set to 0.05 per site in our experiments,
+which yields an average of 1.25 mutations per chromosome).
+This process leaves us with a new generation of booster strategies, 
+ready to be evaluated through simulation.
+
+Visualizing the evolving population of booster schedules presents its own challenges.
+While an average strategy can provide a rough idea of a genetic algorithm's behavior,
+what we are often interested in is more akin to a ``typical good strategy,''
+particularly if our algorithm may have discovered multiple, comparably fit strategies.
+Continuing the analogy of booster schedules as genotypes,
+we are interested in something like the consensus sequence of the most successful
+species-like clusters of schedules. 
+To this end, we constructed a nearest-neighbor
+network of the most successful schedules found by the GA
+and applied a spectral community detection algorithm 
+to find clusters in the network~\cite{Riolo&Newman:2012}.
+This allows us to visualize
+the distribution of alleles within each cluster of schedules
+in a more intuitive way, such as looking at the 
+interquartile range of booster coverage in each age group,
+without losing as much information about the correlation between traits
+as we would by looking at the same summary statistics over the whole population.
+
+
+\begin{figure}[h!]
+
+\begin{tabular}{ll}
+A&B\\
+\includegraphics[height=70mm]{"code/figs/2-fitness-costs-coverage"} &
+\includegraphics[height=70mm]{"code/figs/2-fitness-costs-efficacy"} \\
+C&D\\
+\includegraphics[height=70mm]{"code/figs/2-fitness-costs-waning"} &
+\includegraphics[height=70mm]{"code/figs/2-fitness-costs-leakiness"} \\
+\end{tabular}
+
+\caption{\footnotesize Fitness costs by algorithm generation. 
+Density maps of the fitness costs (combined vaccination effort and disease burden)
+of the 2000 strategies in each generation of the algorithm for
+(A) Scenario I: 70\% infant coverage,
+(B) Scenario II: 70\% vaccine efficacy
+(C) Scenario III: 45 year mean duration of vaccine derived immunity in (G,H,I),
+and 
+(D) Scenario IV: 14.5\% leakiness.
+In each case, darker color indicates a higher density of strategies.
+}
+\end{figure}
+
+
+In all four scenarios, the GA rapidly converges on a population of booster schedules
+with lower combined vaccination and disease costs than the initial, randomly generated
+population of strategies (Fig. \ref{fig:ByGeneration}).
+When vaccine coverage of infants was insufficient (Scenario I),
+the successful booster schedules found by our GA had, on average,
+very little vaccination in older age groups, focusing most of their vaccination effort on 
+young children (\ref{fig:Best}A), which
+achieved more reduction of disease for less vaccination effort 
+than the initial random population of strategies
+ (Fig. \ref{fig:BreakdownByGeneration}A). 
+ 
+ 
+
+\begin{figure}[h!]
+\begin{tabular}{ll}
+A&B\\
+\includegraphics[width=85mm]{"code/figs/3-families-coverage"}
+&
+\includegraphics[width=85mm]{"code/figs/3-families-efficacy"}  \\
+C&D\\
+\includegraphics[width=85mm]{"code/figs/3-families-waning"} &
+\includegraphics[width=85mm]{"code/figs/3-families-leakiness"}\\
+\end{tabular}
+
+\caption{\footnotesize Best booster schedules found for 
+70\% infant coverage (A), 70\% efficacy (B),
+a 45 year mean duration of immunity (C),  
+leaky immunity preventing 85.5\% of infections (D).
+The best 500 booster schedules found in the last algorithm generation of each scenario are arranged into a network
+where each schedule is connected to the nearest 25 (under $L_0$ distance between genomes) strategies.
+The strategies are the clustered using a spectral partitioning algorithm (cluster indicated in the figure by color).
+The large plot shows the interquartile radius within each cluster of coverage at each age group (colors
+in plot correspond to colors in network). The inset plot shows the fitness costs (in DALYs) of strategies in each family,
+ordered from most fit (red, left) to least fit (purple, right).
+}
+
+\label{fig:Best}
+\end{figure}
+
+
+
+For an infant vaccination program with low coverage (Scenario II), we found five distinct clusters of strategies,
+each corresponding to adding a single booster at 1, 2, 3, 4, or 5 years of age.
+Our results for a low efficacy vaccine were very similar (Fig. \ref{fig:ByGeneration}B, Fig. \ref{fig:Best}B),
+with the exception that a higher vaccination effort was necessary to achieve the same effective 
+coverage from the booster vaccine.
+In both cases, the most effective strategies came in the form of a single pre-school booster,
+the timing of which made little difference to fitness as long as it came before 
+children entered school, with the high contact-rates and strong age-assortative mixing
+that come with it (Fig. \ref{fig:Susceptibles}A,B).
+
+Booster schedules for a waning vaccine (Scenario III) 
+differ greatly from those evolved to deal with low coverage or low efficacy (Fig. \ref{fig:Best}C).
+The most successful schedules 
+call for one booster in the late teens and a second booster anytime between 35 and 45 years of age
+(with the exception of the strategy group shown in purple which does not include a single teenage booster
+but would, on average, be expected to include one booster between the ages of 15 and 35).
+These differences can be understood as a difference in the age-distribution of susceptible individuals.
+When we compare booster schedules evolved for vaccines with other durations of immunity (Fig. \ref{fig:waning}),
+we see that, although the number and timing of vaccinations depend on the rates of waning,
+successful schedules maintain vaccine-derived protection in large fraction of the population
+aged 5-45 years, particularly the school-aged children.
+
+
+
+\begin{figure}[h!]
+%\includegraphics[width=0.9\textwidth]{"code/Sfigs/S5-waning-by-time"}\\
+
+\includegraphics[width=\textwidth]{"code/Sfigs/S5-vaccinated-mid-year"}
+
+
+\caption{\footnotesize 
+The fraction of individuals protected by vaccination in each age group,
+plotted for varying durations of vaccine derived immunity.
+In each case, the shaded region represents the interquartile range of the top performing
+quartile of booster schedules in the last generation of the genetic algorithm.
+}
+
+\label{fig:waning}
+\end{figure}
+
+Leaky immunity (Scenario IV) presents yet another picture. 
+The GA finds no booster schedules that effectively reduce the
+disease burden (Fig. \ref{fig:BreakdownByGeneration}J).
+Looking at the nearest-neighbor network of the most successful strategies, there is no discernible community structure
+and the best strategies eschew booster vaccination \ref{fig:Best}D). Again, the explanation lies in the patterns of susceptibility
+in the population. With infant vaccination already granting leaky protection to everyone, 
+any remaining transmission already occurs among vaccinated individuals
+and cannot be disrupted by additional booster vaccinations (Fig. \ref{fig:Susceptibles}D).
+(Results for the scenario where booster vaccinations cause immunity to become less leaky are presented in SOM and
+resemble the results for a low level of primary vaccine failure.)
+
+
+
+Our model is relatively simple and leaves out many mechanisms
+that may play important roles in pertussis transmission and control, including the
+spatial or social aggregation of unvaccinated individuals~\cite{Omer:2009}, 
+the occurrence of asymptomatic cases of pertussis~\cite{deGreeff_et:2010},
+and household structure~\cite{deGreeff_et:2010}.
+Perhaps equally importantly, our model does not attempt to mimic the real vaccination history and demographics
+of any place, instead exploring the relatively simple case of a linear increase in vaccine uptake followed by sustained,
+high levels of infant vaccination.
+
+
+\begin{figure}[h!]
+\includegraphics[width=\textwidth]{"code/figs/5-xtest"}
+\caption{\footnotesize The fitness cost (combined vaccination cost and disease burden)
+applying a boosting schedule evolved for each scenario 
+in each other scenario.
+The representative boosting schedules are constructed by taking the mean coverage at each age
+in the most fit strategy families. 
+These representative schedules (Strategy used) are applied to each scenario (Actual scenario) and the mean fitness cost
+among 120 replicant runs is plotted.
+}
+
+\label{fig:XTest}
+\end{figure}
+
+While our results do not predict the quantitative impact of any particular vaccine schedule on any particular population,
+they nevertheless have implications for vaccine policy.
+We find that optimal booster schedules for controlling pertussis differ 
+greatly for differing mechanisms of vaccine failure and that,
+for example, a booster vaccine schedule optimized to compensate for primary vaccine failure 
+may be extremely ineffective in controlling a pertussis resurgence caused by 
+waning immunity and \textit{vice versa} (Fig. \ref{fig:XTest}).
+Our results suggest that understanding pertussis immunity 
+is critical to developing cost-effective control strategies.
+
+
+\bibliography{ga}
+
+\bibliographystyle{Science}
+
+
+
+% Following is a new environment, {scilastnote}, that's defined in the
+% preamble and that allows authors to add a reference at the end of the
+% list that's not signaled in the text; such references are used in
+% *Science* for acknowledgments of funding, help, etc.
+
+%\begin{scilastnote}
+%\item We've included in the template file \texttt{scifile.tex} a new
+%environment, \texttt{\{scilastnote\}}, that generates a numbered final
+%citation without a corresponding signal in the text.  This environment
+%can be used to generate a final numbered reference containing
+%acknowledgments, sources of funding, and the like, per {\it Science\/}
+%style.
+%\end{scilastnote}
+
+
+
+
+% For your review copy (i.e., the file you initially send in for
+% evaluation), you can use the {figure} environment and the
+% \includegraphics command to stream your figures into the text, placing
+% all figures at the end.  For the final, revised manuscript for
+% acceptance and production, however, PostScript or other graphics
+% should not be streamed into your compliled file.  Instead, set
+% captions as simple paragraphs (with a \noindent tag), setting them
+% off from the rest of the text with a \clearpage as shown  below, and
+% submit figures as separate files according to the Art Department's
+% instructions.
+
+
+\clearpage
+
+%\noindent {\bf Fig. 1.} Please do not use figure environments to set
+%up your figures in the final (post-peer-review) draft, do not include graphics %in your
+%source code, and do not cite figures in the text using \LaTeX\
+%\verb+\ref+ commands.  Instead, simply refer to the figure numbers in
+%the text per {\it Science\/} style, and include the list of captions at
+%the end of the document, coded as ordinary paragraphs as shown in the
+%\texttt{scifile.tex} template file.  Your actual figure files should
+%be submitted separately.
+
+
+
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+
+\setcounter{page}{1}
+\renewcommand{\thepage}{S\arabic{page}}
+
+
+%\lfoot{} \cfoot{\myfont \thepage\ of \pageref{LastPage}} \rfoot{}
+
+
+
+\section*{Supplementary Information}
+
+\subsection*{Calculating strategy fitness}
+
+Although our transmission model does not account for mortality, 
+for the purposes of assessing costs
+we assume a case fatality rate of 
+0.2\% in infants one year or younger,
+of 0.04\% in children 1-4 years of age\cite{},
+and no mortality in older age groups. In all age groups,
+we assume that both symptoms and infectiousness 
+last, on average, for 15 days.
+Thus, under our parameterization,
+a case in a six month old costs
+$\frac{15}{365} + 0.002 * 74.5 \approx 0.19$ DALYs,
+while a case in an adult costs only 
+$\frac{15}{365} \approx 0.041$ DALYs.
+
+Throughout the study, we used a cost of 
+\$33 per dose of vaccine and
+\$50000 per DALY.
+However, it is worth noting that in our current model
+changing the cost per DALY is equivalent to changing
+the cost of vaccine (e.g. an assumption of \$66 per dose of vaccine
+and \$100000 per DALY would produce identical results).
+
+
+\subsection*{GA details}
+
+Point mutations are performed by
+incrementing the value of a single gene by $\epsilon$ 
+where $\epsilon$ is drawn uniformly
+at random from the interval $(-0.1, 0.1)$.
+
+
+\subsection*{Transmission details}
+
+
+
+
+\begin{figure}
+
+\caption{\footnotesize GA results by generation. 
+Each row of panels shows results from a different scenario, with 
+70\% infant coverage in (A,B,C),
+70\% vaccine efficacy in (D,E,F) , 
+45 year mean duration of vaccine derived immunity in (G,H,I),
+and 14.5\% leakiness in (J,K,M).
+(A, D,G,J) Density maps of disease burden (measured in DALYs) in each generation of strategies. 
+More intense color indicates a larger fraction of schedules in that generation of the algorithm.
+current generation with the given disease burden. 
+(B,E,H,K) Density maps of the number of booster shots administered per person per lifetime each generation of strategies. More intense color indicates a larger fraction of schedules in that generation of the algorithm.
+current generation with the given disease burden. 
+(B, D, F, H) Surfaces plot showing the average schedule during each algorithm generation (constructed by taking the mean coverage in each age cohort among each 
+generation of booster schedules),
+with vaccine coverage on the vertical axis plotted against age and algorithm generation.
+}
+
+\begin{tabular}{lll}
+A&B&C\\
+\includegraphics[height=35mm]{"code/figs/2-infection-costs-coverage"}&
+\includegraphics[height=35mm]{"code/figs/2-vaccine-doses-coverage"}&
+\includegraphics[height=40mm]{"code/figs/2-average strategy-coverage"} \\
+
+
+D&E&F\\
+\includegraphics[height=35mm]{"code/figs/2-infection-costs-efficacy"}&
+\includegraphics[height=35mm]{"code/figs/2-vaccine-doses-efficacy"}&
+\includegraphics[height=40mm]{"code/figs/2-average strategy-efficacy"} \\
+
+
+G&H&I\\
+\includegraphics[height=35mm]{"code/figs/2-infection-costs-waning"}&
+\includegraphics[height=35mm]{"code/figs/2-vaccine-doses-waning"}&
+\includegraphics[height=40mm]{"code/figs/2-average strategy-waning"} \\
+
+
+J&K&L\\
+\includegraphics[height=35mm]{"code/figs/2-infection-costs-leakiness"}&
+\includegraphics[height=35mm]{"code/figs/2-vaccine-doses-leakiness"}& 
+\includegraphics[height=40mm]{"code/figs/2-average strategy-leakiness"} \\
+
+
+
+\end{tabular}
+
+\label{fig:BreakdownByGeneration}
+\end{figure}
+
+
+
+
+\begin{figure}
+
+\begin{tabular}{ll}
+A&B\\
+\includegraphics[width=85mm]{"code/figs/4-susceptibles-coverage"}&
+\includegraphics[width=85mm]{"code/figs/4-susceptibles-efficacy"}  \\
+C&D\\
+\includegraphics[width=85mm]{"code/figs/4-susceptibles-waning"} &
+\includegraphics[width=85mm]{"code/figs/4-susceptibles-leakiness"}\\
+
+
+
+\end{tabular}
+
+\caption{\footnotesize Susceptibilty by age under the most successful booster schedules for
+70\% infant coverage (A), 70\% efficacy (B),
+a 45 year mean duration of immunity (C),  
+leaky immunity preventing 85.5\% of infections (D),
+plotted during the first fifty years following the introduction of booster vaccinations.
+Color intensity indicates the percentage of individuals in each age group who are susceptible at each time.
+In the leaky immunity case, 14.5\% of vaccinated individuals are included in this calculation.
+}
+
+
+\label{fig:Susceptibles}
+\end{figure}
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
